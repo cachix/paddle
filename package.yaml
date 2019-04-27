@@ -1,0 +1,32 @@
+name:                paddle
+version:             0.1.0.0
+github:              "benaco/paddle"
+license:             MIT
+author:              "Patrick Chilton"
+maintainer:          "chpatrick@gmail.com"
+copyright:           "2019 Patrick Chilton and Benaco Ltd"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+synopsis:            API to the Paddle payment processor
+category:            Web
+
+description:         Please see the README on GitHub at <https://github.com/benaco/paddle#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- aeson
+- base64-bytestring
+- bytestring
+- containers
+- hashable
+- HsOpenSSL
+- http-conduit
+- text
+- unliftio
+
+library:
+  source-dirs: src
+  ghc-options: -Wall
