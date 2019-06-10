@@ -25,7 +25,9 @@ dependencies:
 - HsOpenSSL
 - http-conduit
 - text
+- time
 - unliftio
+- unordered-containers
 
 library:
   source-dirs: src
