@@ -19,6 +19,7 @@ module Web.Paddle
   , Web.Paddle.init
   , PaddleProductId(..)
   , PaddleCheckoutId(..)
+  , PaddleSecrets(..)
   , FulfillmentWebhookRequest(..)
   , parseFulfillmentWebhookRequest
   , AlertWebhookRequest(..)
