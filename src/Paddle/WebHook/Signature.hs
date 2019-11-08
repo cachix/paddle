@@ -14,21 +14,14 @@ import qualified Data.ByteString.Base64 as Base64
 
 import Paddle.Env (Env(..))
 
-type SignatureBody = M.Map ByteString ByteString
+type SignatureBody = M.Map Text [Text]
 
 -- Given all fields in webhook request, validate against their signature
 validateSignature :: (MonadIO m) => Env -> SignatureBody -> m (Either Text ())
-validateSignature env fields = do
-  case signature >>= signatureDecode >>= serialize of
-    Left err -> return $ Left (toS err)
-    Right (serializedFields, sigBytes) -> liftIO $ SSL.withOpenSSL $ do
-      Just sha1 <- SSL.getDigestByName "SHA1"
-      verifyRes <- SSL.verifyBS sha1 sigBytes (pctxPubKey env) serializedFields
+validateSignature env rawFields =
+  let 
+    fields =  M.fromList $ map (\(k ,v) -> (toS k, toS (maybe "" identity (head v)))) (M.toList rawFields)
 
-      if (verifyRes == SSL.VerifySuccess)
-      then return $ Right ()
-      else return $ Left "Request has invalid signature"
-  where
     signature :: Either Prelude.String ByteString
     signature = maybeToEither "Missing signature field." (M.lookup "p_signature" fields)
 
@@ -42,3 +35,13 @@ validateSignature env fields = do
             "a:" <> BSB.intDec (M.size fields - 1) <> ":{" <>
               foldMap (\( key, value ) -> serializeString key <> serializeString value) (M.toAscList $ M.delete "p_signature" fields)
             <> "}"
+  in do
+    case signature >>= signatureDecode >>= serialize of
+      Left err -> return $ Left (toS err)
+      Right (serializedFields, sigBytes) -> liftIO $ SSL.withOpenSSL $ do
+        Just sha1 <- SSL.getDigestByName "SHA1"
+        verifyRes <- SSL.verifyBS sha1 sigBytes (pctxPubKey env) serializedFields
+
+        if (verifyRes == SSL.VerifySuccess)
+        then return $ Right ()
+        else return $ Left "Request has invalid signature"

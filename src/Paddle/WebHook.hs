@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 module Paddle.WebHook where
 
@@ -39,11 +40,14 @@ data PaddleWebHook passthrough
   | UnknownWebHook Text
   deriving (Generic, Show)
 
-instance (FromForm passthrough, FromHttpApiData passthrough) => FromForm (PaddleWebHook passthrough) where
+instance (FromForm passthrough, FromHttpApiData passthrough) => 
+         FromForm (PaddleWebHook passthrough, SignatureBody) where
   fromForm form = 
-    -- TODO: validateSignature env (fromForm form)
-    lookupUnique "alert_name" form >>= toWebHook
+    lookupUnique "alert_name" form >>= (\name -> liftA2 (,) (toWebHook name) signatureBody)
     where
+      signatureBody :: Either Text SignatureBody
+      signatureBody = fromForm form
+
       toWebHook :: Text -> Either Text (PaddleWebHook passthrough)
       toWebHook "subscription_created" = SubscriptionCreatedWebHook <$> genericFromForm defaultFormOptions form
       toWebHook name = Right $ UnknownWebHook name
