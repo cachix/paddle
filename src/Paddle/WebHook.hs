@@ -40,8 +40,8 @@ data PaddleWebHook passthrough
   | UnknownWebHook Text
   deriving (Generic, Show)
 
-instance (FromForm passthrough, FromHttpApiData passthrough) => 
-         FromForm (PaddleWebHook passthrough, SignatureBody) where
+-- TODO: validate request body using http://hackage.haskell.org/package/servant-0.16.2/docs/Servant-API-WithNamedContext.html
+instance FromHttpApiData passthrough => FromForm (PaddleWebHook passthrough, SignatureBody) where
   fromForm form = 
     lookupUnique "alert_name" form >>= (\name -> liftA2 (,) (toWebHook name) signatureBody)
     where
