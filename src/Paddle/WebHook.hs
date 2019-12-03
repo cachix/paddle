@@ -8,6 +8,7 @@ module Paddle.WebHook where
 import           Protolude
 import           Prelude ()
 import           Data.Proxy                     ( Proxy(..) )
+import           Data.Char                      (toLower, isUpper)
 import           Servant.API
 import           Web.FormUrlEncoded
 import Paddle.WebHook.Signature (SignatureBody)
@@ -48,8 +49,14 @@ instance FromHttpApiData passthrough => FromForm (PaddleWebHook passthrough, Sig
       signatureBody :: Either Text SignatureBody
       signatureBody = fromForm form
 
+      formOptions :: FormOptions
+      formOptions =
+        defaultFormOptions 
+          { fieldLabelModifier = concatMap (\x -> if isUpper x then ['_', toLower x] else [x])
+          }
+
       toWebHook :: Text -> Either Text (PaddleWebHook passthrough)
-      toWebHook "subscription_created" = SubscriptionCreatedWebHook <$> genericFromForm defaultFormOptions form
+      toWebHook "subscription_created" = SubscriptionCreatedWebHook <$> genericFromForm formOptions form
       toWebHook name = Right $ UnknownWebHook name
 
 type API passthrough
