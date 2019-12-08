@@ -1,4 +1,4 @@
-cabal-version: 2.2
+cabal-version:  2.2
 name:           paddle
 version:        0.1.0.0
 synopsis:       API to the Paddle payment processor
@@ -22,7 +22,18 @@ source-repository head
 
 library
   exposed-modules:
+      Paddle.Client
+      Paddle.Client.CreateModifier
+      Paddle.Client.CreateModifierResponse
+      Paddle.Client.DeleteModifier
+      Paddle.Client.GeneratePayLink
+      Paddle.Client.GeneratePayLinkResponse
+      Paddle.Client.ListModifier
+      Paddle.Client.ListModifierResponse
+      Paddle.Client.ListUsers
+      Paddle.Client.ListUsersResponse
       Paddle.Env
+      Paddle.FieldModifier
       Paddle.WebHook
       Paddle.WebHook.Signature
   other-modules:
@@ -37,15 +48,13 @@ library
     , base64-bytestring
     , bytestring
     , containers
-    , hashable
-    , http-conduit
     , http-api-data
-    , text
+    , http-client
     , time
     , protolude
     , servant
-    , unliftio
-    , unordered-containers
+    , servant-client
+    , servant-client-core
   default-language: Haskell2010
   default-extensions:
     OverloadedStrings
