@@ -2,9 +2,10 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DeriveAnyClass #-}
 module Paddle.Client 
- ( PaddleError(..)
+ ( API(..)
+ , PaddleError(..)
  , PaddleResponse(..)
- , API(..)
+ , responseToEither
  , client
  , runClient
  ) where
@@ -38,6 +39,10 @@ instance Exception Paddle.Client.PaddleError
 data PaddleResponse a = 
   ResponseError PaddleError | ResponseSuccess a
   deriving (Show)
+
+responseToEither :: PaddleResponse a -> Either PaddleError a
+responseToEither (ResponseError e) = Left e
+responseToEither (ResponseSuccess a) = Right a
 
 instance FromJSON a => FromJSON (PaddleResponse a) where
   parseJSON = withObject "PaddleResponse" $ \v -> do
