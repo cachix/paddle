@@ -56,7 +56,7 @@ data API route = API
         "subscription" :>
         "modifiers" :>
         ReqBody '[JSON] ListModifier :>
-        Post '[JSON] (PaddleResponse ListModifierResponse)
+        Post '[JSON] (PaddleResponse [ListModifierResponse])
     , modifiersCreate :: route :-
         "subscription" :>
         "modifiers" :>
