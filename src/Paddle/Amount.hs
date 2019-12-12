@@ -22,6 +22,7 @@ instance FromJSON Amount where
       <|> withScientific "amount" (pure . Amount) value
       where
         f :: Text -> Parser Amount
+        -- TODO: use `reads` to `fail` early
         f t = pure $ Amount (read (toS t))
 
 instance ToJSON Amount where
