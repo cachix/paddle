@@ -22,6 +22,7 @@ source-repository head
 
 library
   exposed-modules:
+      Paddle.Amount
       Paddle.Client
       Paddle.Client.CreateModifier
       Paddle.Client.CreateModifierResponse
@@ -52,6 +53,7 @@ library
     , http-client
     , time
     , protolude
+    , scientific
     , servant
     , servant-client
     , servant-client-core

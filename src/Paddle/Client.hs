@@ -68,7 +68,7 @@ data API route = API
         "modifiers" :>
         "delete" :>
         ReqBody '[JSON] DeleteModifier :>
-        Post '[JSON] (PaddleResponse ())
+        Post '[JSON] (PaddleResponse (Maybe ())) -- https://github.com/bos/aeson/issues/744
     , productGeneratePayLink :: route :-
         "product" :>
         "generate_pay_link" :>
