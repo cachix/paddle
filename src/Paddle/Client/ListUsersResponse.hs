@@ -4,7 +4,7 @@ import Data.Aeson (FromJSON, parseJSON, genericParseJSON)
 import Protolude
 import Prelude ()
 import Paddle.FieldModifier (customJSONOptions)
-
+import Paddle.Amount
 
 data ListUsersResponse = ListUsersResponse
   { subscriptionId :: Integer
@@ -23,7 +23,7 @@ instance FromJSON ListUsersResponse where
   parseJSON = genericParseJSON customJSONOptions
 
 data Payment = Payment
-  { amount :: Double
+  { amount :: Amount
   , currency :: Text
   , date :: Text
   } deriving (Show, Generic)
