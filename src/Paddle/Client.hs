@@ -30,7 +30,7 @@ import           Paddle.Client.ListUsers (ListUsers)
 import           Paddle.Client.ListUsersResponse (ListUsersResponse)
 
 data PaddleError = PaddleError
-  { error :: Text
+  { message :: Text
   , code :: Int 
   } deriving (Show, Generic, FromJSON)
 
