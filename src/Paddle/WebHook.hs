@@ -7,7 +7,6 @@ module Paddle.WebHook where
 
 import           Protolude
 import           Prelude ()
-import           Data.Proxy                     ( Proxy(..) )
 import           Servant.API
 import           Web.FormUrlEncoded
 import Paddle.WebHook.Signature (SignatureBody)
