@@ -28,6 +28,8 @@ import           Paddle.Client.CreateModifier (CreateModifier)
 import           Paddle.Client.CreateModifierResponse (CreateModifierResponse)
 import           Paddle.Client.ListUsers (ListUsers)
 import           Paddle.Client.ListUsersResponse (ListUsersResponse)
+import           Paddle.Client.SubscriptionUsersUpdate (SubscriptionUsersUpdate)
+import           Paddle.Client.SubscriptionUsersUpdateResponse (SubscriptionUsersUpdateResponse)
 
 data PaddleError = PaddleError
   { message :: Text
@@ -79,6 +81,12 @@ data API route = API
         "users" :>
         ReqBody '[JSON] ListUsers :>
         Post '[JSON] (PaddleResponse [ListUsersResponse])
+    , subscriptionUsersUpdate :: route :-
+        "subscription" :>
+        "users" :>
+        "update" :>
+        ReqBody '[JSON] SubscriptionUsersUpdate :>
+        Post '[JSON] (PaddleResponse SubscriptionUsersUpdateResponse)
     } deriving (Generic)
 
 api :: Proxy (ToServantApi API)
