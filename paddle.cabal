@@ -37,6 +37,8 @@ library
       Paddle.FieldModifier
       Paddle.WebHook
       Paddle.WebHook.Signature
+      Paddle.WebHook.SubscriptionCreated
+      Paddle.WebHook.SubscriptionCancelled
   other-modules:
       Paths_paddle
   hs-source-dirs:
