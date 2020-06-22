@@ -33,6 +33,8 @@ library
       Paddle.Client.ListModifierResponse
       Paddle.Client.ListUsers
       Paddle.Client.ListUsersResponse
+      Paddle.Client.SubscriptionUsersUpdate
+      Paddle.Client.SubscriptionUsersUpdateResponse
       Paddle.Env
       Paddle.FieldModifier
       Paddle.WebHook
