@@ -13,7 +13,7 @@ data ListUsersResponse = ListUsersResponse
   , userEmail :: Text
   , marketingConsent :: Bool
   , lastPayment :: Payment
-  , nextPayment :: Payment
+  , nextPayment :: Maybe Payment
   , updateUrl :: Text
   , cancelUrl :: Text
   -- TODO: state, signup_date, paused_at, paused_from
@@ -30,4 +30,3 @@ data Payment = Payment
 
 instance FromJSON Payment where
   parseJSON = genericParseJSON customJSONOptions
-  
