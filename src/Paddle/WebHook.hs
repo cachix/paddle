@@ -10,33 +10,13 @@ import           Prelude ()
 import           Servant.API
 import           Web.FormUrlEncoded
 import Paddle.WebHook.Signature (SignatureBody)
+import Paddle.WebHook.SubscriptionCreated (SubscriptionCreated)
+import Paddle.WebHook.SubscriptionCancelled (SubscriptionCancelled)
 import Paddle.FieldModifier (modifier)
-
-{-
-data SubscriptionStatus =
-    Active | Trialing | PastDue | Deleted
-    deriving (Show, Eq)
-
-instance FromHttpApiData SubscriptionStatus where
-  where
-    parseUrlPiece = 
-
-instance FromForm SubscriptionStatus where
-  fromForm form = 
-    Left (trace ("form" :: Text) $ show form) -- TODO
--}
-
-data SubscriptionCreated passthrough = SubscriptionCreated
-  { subscriptionId :: Text
-  , subscriptionPlanId :: Text
-  , updateUrl :: Text
-  , cancelUrl :: Text
-  --, status :: SubscriptionStatus
-  , passthrough :: passthrough
-  } deriving (Generic, Show)
 
 data PaddleWebHook passthrough 
   = SubscriptionCreatedWebHook (SubscriptionCreated passthrough)
+  | SubscriptionCancelledWebHook (SubscriptionCancelled passthrough)
   | UnknownWebHook Text
   deriving (Generic, Show)
 
@@ -56,6 +36,7 @@ instance FromHttpApiData passthrough => FromForm (PaddleWebHook passthrough, Sig
 
       toWebHook :: Text -> Either Text (PaddleWebHook passthrough)
       toWebHook "subscription_created" = SubscriptionCreatedWebHook <$> genericFromForm formOptions form
+      toWebHook "subscription_cancelled" = SubscriptionCancelledWebHook <$> genericFromForm formOptions form
       toWebHook name = Right $ UnknownWebHook name
 
 type API passthrough
