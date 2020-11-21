@@ -2,7 +2,8 @@ module Paddle.WebHook.Signature where
 
 import Prelude ()
 import qualified Prelude
-import Protolude
+import Protolude hiding (toS)
+import Protolude.Conv
 import qualified Data.Map.Strict as M
 import qualified Data.ByteString.Builder as BSB
 import qualified Data.ByteString.Char8 as BS
