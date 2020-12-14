@@ -1,6 +1,6 @@
 cabal-version:  2.2
 name:           paddle
-version:        0.1.0.0
+version: 0.1.0.0
 synopsis:       API to the Paddle payment processor
 description:    Please see the README on GitHub at <https://github.com/benaco/paddle#readme>
 category:       Web
