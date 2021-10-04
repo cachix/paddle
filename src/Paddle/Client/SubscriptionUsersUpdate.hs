@@ -11,10 +11,8 @@ data SubscriptionUsersUpdate = SubscriptionUsersUpdate
   { vendorId :: Int
   , vendorAuthCode :: Text
   , subscriptionId :: Integer
-  , quantity :: Integer
   , planId :: Maybe Integer
   , prorate :: Maybe Bool
-  , pause :: Maybe Bool
   , billImmediately :: Maybe Bool
   } deriving (Show, Generic)
 
