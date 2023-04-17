@@ -15,10 +15,8 @@ import           Protolude
 import           Prelude ()
 import           Network.HTTP.Client ( Manager )
 import           Servant.API
-import           Servant.API.Generic
 import           Servant.Client hiding (client)
 import qualified Servant.Client
-import           Servant.Client.Generic
 import           Paddle.Client.DeleteModifier (DeleteModifier)
 import           Paddle.Client.ListModifier (ListModifier)
 import           Paddle.Client.GeneratePayLink (GeneratePayLink)
