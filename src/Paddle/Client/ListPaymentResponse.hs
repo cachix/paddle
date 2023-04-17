@@ -13,7 +13,7 @@ data ListPaymentResponse = ListPaymentResponse
   , currency :: Text
   , payoutDate :: Text
   , isPaid :: Integer
-  , receiptUrl :: Text
+  , receiptUrl :: Maybe Text
   , isOneOffCharge :: Bool
   } deriving (Show, Generic)
 
