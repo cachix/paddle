@@ -29,6 +29,8 @@ library
       Paddle.Client.DeleteModifier
       Paddle.Client.GeneratePayLink
       Paddle.Client.GeneratePayLinkResponse
+      Paddle.Client.ListPayment
+      Paddle.Client.ListPaymentResponse
       Paddle.Client.ListModifier
       Paddle.Client.ListModifierResponse
       Paddle.Client.ListUsers

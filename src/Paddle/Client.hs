@@ -28,6 +28,8 @@ import           Paddle.Client.CreateModifier (CreateModifier)
 import           Paddle.Client.CreateModifierResponse (CreateModifierResponse)
 import           Paddle.Client.ListUsers (ListUsers)
 import           Paddle.Client.ListUsersResponse (ListUsersResponse)
+import           Paddle.Client.ListPayment (ListPayment)
+import           Paddle.Client.ListPaymentResponse (ListPaymentResponse)
 import           Paddle.Client.SubscriptionUsersUpdate (SubscriptionUsersUpdate)
 import           Paddle.Client.SubscriptionUsersUpdateResponse (SubscriptionUsersUpdateResponse)
 
@@ -71,6 +73,11 @@ data API route = API
         "delete" :>
         ReqBody '[JSON] DeleteModifier :>
         Post '[JSON] (PaddleResponse (Maybe ())) -- https://github.com/bos/aeson/issues/744
+    , paymentsList :: route :-
+        "subscription" :>
+        "payments" :>
+        ReqBody '[JSON] ListPayment :>
+        Post '[JSON] (PaddleResponse [ListPaymentResponse])
     , productGeneratePayLink :: route :-
         "product" :>
         "generate_pay_link" :>
