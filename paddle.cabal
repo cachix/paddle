@@ -2,10 +2,10 @@ cabal-version:  2.2
 name:           paddle
 version: 0.1.0.0
 synopsis:       API to the Paddle payment processor
-description:    Please see the README on GitHub at <https://github.com/benaco/paddle#readme>
+description:    Please see the README on GitHub at <https://github.com/cachix/paddle#readme>
 category:       Web
-homepage:       https://github.com/benaco/paddle#readme
-bug-reports:    https://github.com/benaco/paddle/issues
+homepage:       https://github.com/cachix/paddle#readme
+bug-reports:    https://github.com/cachix/paddle/issues
 author:         Patrick Chilton
 maintainer:     chpatrick@gmail.com
 copyright:      2019 Patrick Chilton and Benaco Ltd
