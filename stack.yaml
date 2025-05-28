@@ -1,5 +1,5 @@
-resolver: lts-20.18
+resolver: lts-23.24
 packages:
-- .
-nix:
-  packages: [openssl,zlib]
+  - .
+system-ghc: true
+notify-if-nix-on-path: false
