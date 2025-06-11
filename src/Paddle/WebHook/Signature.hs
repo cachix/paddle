@@ -17,10 +17,20 @@ import Paddle.Env (Env(..))
 
 type SignatureBody = M.Map Text [Text]
 
+-- | Serialize a map of fields for signature verification
+serializeFields :: M.Map ByteString ByteString -> ByteString
+serializeFields fields =
+  let serializeString str = "s:" <> BSB.intDec (BS.length str) <> ":\"" <> BSB.byteString str <> "\";"
+  in LBS.toStrict $ BSB.toLazyByteString $
+       "a:" <> BSB.intDec (M.size fields) <> ":{" <>
+         foldMap (\(key, value) -> serializeString key <> serializeString value) (M.toAscList fields)
+       <> "}"
+
 -- Given all fields in webhook request, validate against their signature
 validateSignature :: (MonadIO m) => Env -> SignatureBody -> m (Either Text ())
 validateSignature env rawFields =
   let 
+    fields :: M.Map ByteString ByteString
     fields =  M.fromList $ map (\(k ,v) -> (toS k, toS (maybe "" identity (head v)))) (M.toList rawFields)
 
     signature :: Either Prelude.String ByteString
@@ -31,11 +41,7 @@ validateSignature env rawFields =
 
     -- we need to verify the signature against the PHP-serialized request parameters (excluding p_signature)
     -- here's a gist that does it in Swift: https://gist.github.com/drewmccormack/a51b18ffeda8f596a11a8623481344d8
-    serializeString str = "s:" <> BSB.intDec (BS.length str) <> ":\"" <> BSB.byteString str <> "\";"
-    serialize sig = (\x -> Right (x, sig)) <$> LBS.toStrict $ BSB.toLazyByteString $
-            "a:" <> BSB.intDec (M.size fields - 1) <> ":{" <>
-              foldMap (\( key, value ) -> serializeString key <> serializeString value) (M.toAscList $ M.delete "p_signature" fields)
-            <> "}"
+    serialize sig = Right (serializeFields (M.delete "p_signature" fields), sig)
   in do
     case signature >>= signatureDecode >>= serialize of
       Left err -> return $ Left (toS err)
