@@ -16,16 +16,22 @@ spec = describe "Paddle.WebHook.Signature" $ do
     it "validates a correct signature with real webhook data" $ do
       signedData <- generateSignedWebhookData
       pubKey <- getTestPublicKey
-      env <- createTestEnv pubKey
-      result <- validateSignature env signedData
-      result `shouldSatisfy` isRight
+      envResult <- createTestEnv pubKey
+      case envResult of
+        Right env -> do
+          result <- validateSignature env signedData
+          result `shouldSatisfy` isRight
+        Left err -> expectationFailure $ "Failed to create test environment: " <> show err
 
     it "rejects an invalid signature" $ do
       let invalidData = M.fromList [("alert_name", ["test"]), ("p_signature", ["invalid_signature"])]
       pubKey <- getTestPublicKey
-      env <- createTestEnv pubKey
-      result <- validateSignature env invalidData
-      result `shouldSatisfy` isLeft
+      envResult <- createTestEnv pubKey
+      case envResult of
+        Right env -> do
+          result <- validateSignature env invalidData
+          result `shouldSatisfy` isLeft
+        Left err -> expectationFailure $ "Failed to create test environment: " <> show err
 
 -- Test webhook data (without signature)
 testWebhookFields :: M.Map Text Text
@@ -77,7 +83,7 @@ signWithOpenssl dataToSign = do
   return signature
 
 -- Helper function to create test environment
-createTestEnv :: Text -> IO Env
+createTestEnv :: Text -> IO (Either Text Env)
 createTestEnv pubKeyPem = do
   let secrets =
         PaddleSecrets
