@@ -19,14 +19,17 @@ type SignatureBody = M.Map Text [Text]
 -- | Serialize a map of fields for signature verification
 serializeFields :: M.Map ByteString ByteString -> ByteString
 serializeFields fields =
-  let serializeString str = "s:" <> BSB.intDec (BS.length str) <> ":\"" <> BSB.byteString str <> "\";"
-   in LBS.toStrict $
-        BSB.toLazyByteString $
-          "a:"
-            <> BSB.intDec (M.size fields)
-            <> ":{"
-            <> foldMap (\(key, value) -> serializeString key <> serializeString value) (M.toAscList fields)
-            <> "}"
+  LBS.toStrict $
+    BSB.toLazyByteString $
+      "a:"
+        <> BSB.intDec (M.size fields)
+        <> ":{"
+        <> foldMap (\(key, value) -> serializeString key <> serializeString value) (M.toAscList fields)
+        <> "}"
+  where
+    serializePair (k, v) = serializeString k <> serializeString v
+    serializeString s =
+      "s:" <> BSB.intDec (BS.length s) <> ":\"" <> BSB.byteString s <> "\";"
 
 -- Given all fields in webhook request, validate against their signature
 validateSignature :: (MonadIO m) => Env -> SignatureBody -> m (Either Text ())

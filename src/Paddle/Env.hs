@@ -22,18 +22,28 @@ data Env = Env
   , pctxApiKey :: Text
   } deriving (Eq)
 
+-- | Parse an RSA public key from PEM-encoded text
+parseRSAPublicKey :: Text -> Either Text RSA.PublicKey
+parseRSAPublicKey pemText = do
+  pems <- first (("PEM parse error: " <>) . toS) $ PEM.pemParseBS (encodeUtf8 pemText)
+  pem <- case pems of
+    [p] -> Right p
+    []  -> Left "No PEM objects found"
+    _   -> Left "Multiple PEM objects found"
+  
+  asn1 <- first (("ASN1 decode error: " <>) . show) $ 
+    ASN1.decodeASN1' ASN1.DER (PEM.pemContent pem)
+  
+  case ASN1.fromASN1 asn1 of
+    Right (X509.PubKeyRSA key, _) -> Right key
+    Right _ -> Left "Public key is not RSA"
+    Left err -> Left $ "ASN1 parse error: " <> show err
+
 init :: (MonadIO m) => PaddleSecrets -> m Env
 init secrets = do
-  pubKey <- case PEM.pemParseBS (encodeUtf8 (paddlePublicKey secrets)) of
-    Right [pem] -> case ASN1.decodeASN1' ASN1.DER (PEM.pemContent pem) of
-      Right asn1 -> case ASN1.fromASN1 asn1 of
-        Right (X509.PubKeyRSA rsaKey, _) -> return rsaKey
-        Right _ -> panic "Public key is not RSA"
-        Left err -> panic $ "Failed to parse public key from ASN1: " <> show err
-      Left err -> panic $ "Failed to decode ASN1: " <> show err
-    Right [] -> panic "No PEM objects found"
-    Right _ -> panic "Multiple PEM objects found, expected one"
-    Left err -> panic $ "Failed to parse PEM: " <> show err
+  pubKey <- case parseRSAPublicKey (paddlePublicKey secrets) of
+    Right key -> return key
+    Left err -> panic err
   return Env
     { pctxPubKey = pubKey
     , pctxVendorId = paddleVendorId secrets
