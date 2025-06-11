@@ -2,7 +2,6 @@ module Paddle.WebHook.Signature where
 
 import qualified Crypto.Hash as Hash
 import qualified Crypto.PubKey.RSA.PKCS15 as RSA
-import qualified Data.ByteArray as BA
 import qualified Data.ByteString.Base64 as Base64
 import qualified Data.ByteString.Builder as BSB
 import qualified Data.ByteString.Char8 as BS
@@ -24,7 +23,7 @@ serializeFields fields =
       "a:"
         <> BSB.intDec (M.size fields)
         <> ":{"
-        <> foldMap (\(key, value) -> serializeString key <> serializeString value) (M.toAscList fields)
+        <> foldMap serializePair (M.toAscList fields)
         <> "}"
   where
     serializePair (k, v) = serializeString k <> serializeString v
@@ -50,7 +49,6 @@ validateSignature env rawFields =
         case signature >>= signatureDecode >>= serialize of
           Left err -> return $ Left (toS err)
           Right (serializedFields, sigBytes) -> do
-            let sha1Hash = Hash.hash serializedFields :: Hash.Digest Hash.SHA1
-            if RSA.verify (Just Hash.SHA1) (pctxPubKey env) (BA.convert sha1Hash) sigBytes
+            if RSA.verify (Just Hash.SHA1) (pctxPubKey env) serializedFields sigBytes
               then return $ Right ()
               else return $ Left "Request has invalid signature"
