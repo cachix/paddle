@@ -39,13 +39,12 @@ parseRSAPublicKey pemText = do
     Right _ -> Left "Public key is not RSA"
     Left err -> Left $ "ASN1 parse error: " <> show err
 
-init :: (MonadIO m) => PaddleSecrets -> m Env
+init :: (MonadIO m) => PaddleSecrets -> m (Either Text Env)
 init secrets = do
-  pubKey <- case parseRSAPublicKey (paddlePublicKey secrets) of
-    Right key -> return key
-    Left err -> panic err
-  return Env
-    { pctxPubKey = pubKey
-    , pctxVendorId = paddleVendorId secrets
-    , pctxApiKey = paddleApiKey secrets
-    }
+  return $ do
+    pubKey <- parseRSAPublicKey (paddlePublicKey secrets)
+    return Env
+      { pctxPubKey = pubKey
+      , pctxVendorId = paddleVendorId secrets
+      , pctxApiKey = paddleApiKey secrets
+      }
