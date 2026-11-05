@@ -1,0 +1,19 @@
+{
+  "data": {
+    "id": "pri_00000000000000000000000000",
+    "product_id": "pro_00000000000000000000000000",
+    "description": "Monthly plan",
+    "unit_price": {
+      "amount": "1500",
+      "currency_code": "GBP"
+    },
+    "billing_cycle": {
+      "interval": "month",
+      "frequency": 1
+    },
+    "status": "archived"
+  },
+  "meta": {
+    "request_id": "test-request"
+  }
+}

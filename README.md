@@ -1,10 +1,19 @@
-# Haskell API for [Paddle](https://paddle.com) payments
+# Paddle for Haskell
 
-Implements parts of:
+Clients and webhook verification for Paddle Classic and Paddle Billing.
 
-- Paddle.WebHook - [webhooks](https://developer.paddle.com/webhook-reference/intro)
-- Paddle.Client - [API](https://developer.paddle.com/api-reference/intro)
+- **Classic:** `Paddle.Client` and `Paddle.WebHook`.
+- **Billing:** `Paddle.Billing.Client` and `Paddle.Billing.WebHook`, covering
+  customers, addresses, subscriptions, portal sessions, catalog, and transactions.
 
-## Getting started
+See the [Billing guide](docs/billing.md) for usage and migration details.
+Classic and Billing use separate credentials and records.
 
-TODO: minimal example
+## Tests
+
+```sh
+stack test
+```
+
+Local tests require no Paddle credentials. See [sandbox testing](docs/sandbox.md)
+for the opt-in invoice lifecycle, real webhooks, and browser card checkout.

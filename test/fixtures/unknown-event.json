@@ -1,0 +1,9 @@
+{
+  "event_id": "evt_00000000000000000000000000",
+  "event_type": "future.event",
+  "occurred_at": "2026-11-05T12:00:00Z",
+  "notification_id": "ntf_00000000000000000000000000",
+  "data": {
+    "new_field": true
+  }
+}

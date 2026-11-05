@@ -1,0 +1,29 @@
+{
+  "data": [
+    {
+      "id": "add_00000000000000000000000000",
+      "customer_id": "ctm_00000000000000000000000000",
+      "description": null,
+      "first_line": "123 Main Street",
+      "second_line": null,
+      "city": "London",
+      "postal_code": "SW1A 1AA",
+      "region": null,
+      "country_code": "GB",
+      "status": "active",
+      "custom_data": null,
+      "created_at": "2026-11-05T12:00:00Z",
+      "updated_at": "2026-11-05T12:00:00Z",
+      "import_meta": null
+    }
+  ],
+  "meta": {
+    "request_id": "test-request",
+    "pagination": {
+      "per_page": 1,
+      "next": "https://api.paddle.com/addresses?after=add_00000000000000000000000000",
+      "has_more": true,
+      "estimated_total": 2
+    }
+  }
+}

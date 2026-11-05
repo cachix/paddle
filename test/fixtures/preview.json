@@ -1,0 +1,73 @@
+{
+  "data": {
+    "customer_id": "ctm_00000000000000000000000000",
+    "address_id": "add_00000000000000000000000000",
+    "business_id": null,
+    "status": "active",
+    "currency_code": "GBP",
+    "collection_mode": "automatic",
+    "items": [
+      {
+        "price": {
+          "id": "pri_00000000000000000000000000",
+          "product_id": "pro_00000000000000000000000000",
+          "description": "Monthly plan",
+          "unit_price": {
+            "amount": "1500",
+            "currency_code": "GBP"
+          },
+          "billing_cycle": {
+            "interval": "month",
+            "frequency": 1
+          }
+        },
+        "quantity": 2,
+        "status": "active"
+      }
+    ],
+    "billing_cycle": {
+      "interval": "month",
+      "frequency": 1
+    },
+    "current_billing_period": {
+      "starts_at": "2026-11-05T12:00:00Z",
+      "ends_at": "2026-12-05T12:00:00Z"
+    },
+    "next_billed_at": "2026-12-05T12:00:00Z",
+    "scheduled_change": null,
+    "custom_data": {
+      "account_id": "example"
+    },
+    "import_meta": {
+      "external_id": "99",
+      "imported_from": "paddle_classic"
+    },
+    "created_at": "2026-11-05T12:00:00Z",
+    "updated_at": "2026-11-05T12:00:00Z",
+    "immediate_transaction": {
+      "details": {
+        "totals": {
+          "total": "500",
+          "currency_code": "GBP"
+        }
+      }
+    },
+    "next_transaction": null,
+    "recurring_transaction_details": {
+      "totals": {
+        "total": "3000",
+        "currency_code": "GBP"
+      }
+    },
+    "update_summary": {
+      "result": {
+        "action": "charge",
+        "amount": "500",
+        "currency_code": "GBP"
+      }
+    }
+  },
+  "meta": {
+    "request_id": "test-request"
+  }
+}

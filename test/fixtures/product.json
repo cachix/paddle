@@ -1,0 +1,12 @@
+{
+  "data": {
+    "id": "pro_00000000000000000000000000",
+    "name": "Functional test",
+    "tax_category": "standard",
+    "status": "active",
+    "custom_data": null
+  },
+  "meta": {
+    "request_id": "test-request"
+  }
+}
