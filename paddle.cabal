@@ -16,8 +16,8 @@ extra-source-files:
     README.md
     ChangeLog.md
     test/fixtures/*.json
-    test/BillingWebhookVerify.hs
-    test/paddle_checkout_sandbox.py
+    docs/*.md
+    test/checkout.html
 
 source-repository head
   type: git
@@ -137,6 +137,7 @@ test-suite billing-sandbox-tests
   type: exitcode-stdio-1.0
   main-is: BillingSandbox.hs
   hs-source-dirs: test
+  other-modules: BillingSandboxSupport
   ghc-options: -Wall -threaded
   if !flag(sandbox-tests)
     buildable: False
@@ -150,4 +151,30 @@ test-suite billing-sandbox-tests
     , random
     , servant-client
     , text
+  default-language: Haskell2010
+
+executable billing-checkout
+  main-is: BillingCheckout.hs
+  hs-source-dirs: test
+  other-modules: BillingSandboxSupport
+  ghc-options: -Wall -threaded
+  if !flag(sandbox-tests)
+    buildable: False
+  build-depends:
+      base >=4.7 && <5
+    , aeson >=2.0
+    , bytestring
+    , containers
+    , crypton
+    , http-client
+    , http-client-tls >=0.4
+    , http-types
+    , paddle
+    , random
+    , ram
+    , servant-client
+    , text
+    , time
+    , wai
+    , warp
   default-language: Haskell2010

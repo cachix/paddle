@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Paddle sandbox checkout</title>
+<h1>Paddle sandbox checkout</h1>
+<p>Use card 4242 4242 4242 4242, any future expiry, and any three-digit CVC.</p>
+<button onclick="openCheckout()">Open checkout</button>
+<p id="status"></p>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+Paddle.Environment.set('sandbox');
+Paddle.Initialize({token: TOKEN, eventCallback: function(event) {
+  document.getElementById('status').textContent = event.name;
+}});
+function openCheckout() { Paddle.Checkout.open({transactionId: TRANSACTION}); }
+openCheckout();
+</script>
+</html>

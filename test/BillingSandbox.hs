@@ -4,10 +4,8 @@
 -- catalog entries are archived on success or failure; records remain inspectable.
 module Main (main) where
 
-import Control.Concurrent (threadDelay)
-import Control.Exception (SomeException, mask, throwIO, try)
-import Control.Monad (unless, void, when)
-import Data.IORef (modifyIORef', newIORef, readIORef)
+import BillingSandboxSupport
+import Control.Monad (void, when)
 import Data.Aeson (Value(Object), object, (.=))
 import Data.List (sort)
 import Data.Text (Text)
@@ -16,7 +14,6 @@ import qualified Data.Text.IO as Text
 import Data.Word (Word64)
 import Network.HTTP.Client (Manager)
 import Network.HTTP.Client.TLS (newTlsManager)
-import Network.HTTP.Types.Status (statusCode)
 import Numeric (showHex)
 import qualified Paddle.Billing.Client as Billing
 import Paddle.Billing.Address
@@ -27,17 +24,12 @@ import Paddle.Billing.Settings
 import Paddle.Billing.Subscription
 import Paddle.Billing.Types
 import Paddle.Billing.Transaction
-import Servant.Client (ClientError(..), ClientM, responseStatusCode)
-import System.Environment (lookupEnv)
+import Servant.Client (ClientM)
 import System.Random (randomIO)
 
 main :: IO ()
 main = do
-  token <- Text.strip . maybe "" Text.pack <$> lookupEnv "PADDLE_SANDBOX_API_KEY"
-  unless (not (Text.null token)) $
-    fail "Set PADDLE_SANDBOX_API_KEY to a Paddle sandbox API key before running this suite."
-  unless (not ("pdl_live_" `Text.isPrefixOf` token)) $
-    fail "PADDLE_SANDBOX_API_KEY contains a live key. Use a sandbox API key."
+  token <- loadSandboxKey
   manager <- newTlsManager
   nonce <- randomIO :: IO Word64
   let tag = "paddle-functional-" <> Text.pack (showHex nonce "")
@@ -264,52 +256,9 @@ cancelInvoiceSubscription manager token identifier = do
       when (subscriptionStatus value /= "canceled") $ void $ request "cancel subscription during cleanup" $
         Billing.subscriptionsCancel api subscription (CancelSubscription Immediately)
 
--- Only repeat reads while waiting for Paddle's asynchronous state transitions.
--- Writes are never retried: a lost response must not create duplicate records.
-pollUntil :: String -> IO a -> (a -> Bool) -> IO a
-pollUntil label action ready = go (30 :: Int)
-  where
-    go remaining = do
-      value <- action
-      if ready value then pure value
-      else if remaining <= 1 then fail ("Timed out waiting for " <> label)
-      else threadDelay 1000000 >> go (remaining - 1)
-
-sandboxRequest :: Manager -> String -> ClientM (Response a) -> IO a
-sandboxRequest manager label action = do
-  result <- Billing.runClient manager Billing.Sandbox action
-  case result of
-    Left err -> fail (label <> ": " <> describeError err)
-    Right response -> do
-      check (label <> " has a request ID") (not (Text.null (metaRequestId (responseMeta response))))
-      putStrLn ("PASS " <> label)
-      pure (responseData response)
-
--- Run cleanup in reverse creation order, even after assertions fail. Attempt
--- every cleanup action and fail the suite if cleanup fails on a successful run.
-withCleanups :: ((String -> IO () -> IO ()) -> IO ()) -> IO ()
-withCleanups body = mask $ \restore -> do
-  actions <- newIORef []
-  result <- try (restore (body (\label action -> modifyIORef' actions ((label, action) :))))
-  registered <- readIORef actions
-  outcomes <- mapM (\(label, action) -> do
-    outcome <- try action :: IO (Either SomeException ())
-    case outcome of
-      Left _ -> putStrLn ("FAIL cleanup: " <> label <> "; inspect the printed record IDs.")
-      Right () -> pure ()
-    pure outcome) registered
-  case result of
-    Left err -> throwIO (err :: SomeException)
-    Right () -> do
-      check "all cleanup actions succeeded" (all (either (const False) (const True)) outcomes)
-      putStrLn "Sandbox functional tests passed. Canceled and archived records remain for inspection."
-
 itemQuantities :: Subscription -> [(PriceId, Int)]
 itemQuantities value = sort
   [(priceId (itemPrice item), itemQuantity item) | item <- subscriptionItems value]
-
-check :: String -> Bool -> IO ()
-check label condition = unless condition (fail ("Assertion failed: " <> label))
 
 checkAddressPages :: Manager -> Text -> CustomerId -> [AddressId] -> IO ()
 checkAddressPages manager token customer expected = do
@@ -337,17 +286,3 @@ checkAddressPages manager token customer expected = do
   check "pages contain both created addresses exactly once"
     (length identifiers == 2 && all (`elem` identifiers) expected && firstIds /= secondIds)
   putStrLn "PASS address pagination"
-
--- Servant errors can contain Authorization headers and portal URL tokens.
--- Report the error category, HTTP status, and Paddle request ID without dumping
--- the underlying request or response.
-describeError :: Billing.BillingClientError -> String
-describeError (Billing.BillingApiError response _) =
-  "Paddle error " <> Text.unpack (apiErrorCode (errorResponseError response))
-  <> " (request " <> Text.unpack (metaRequestId (errorResponseMeta response)) <> ")"
-describeError (Billing.BillingTransportError err) = case err of
-  FailureResponse _ response -> "HTTP " <> show (statusCode (responseStatusCode response))
-  DecodeFailure _ _ -> "response JSON did not match the Billing schema"
-  UnsupportedContentType _ _ -> "unexpected response content type"
-  InvalidContentTypeHeader _ -> "invalid response content type"
-  ConnectionError _ -> "connection or TLS failure"
