@@ -2,6 +2,7 @@
 
 ## Unreleased changes
 
+* Add customer/subscription-filtered transaction pagination and on-demand invoice PDF URLs.
 * Pin sandbox TLS dependencies compatible with the current crypton backend.
 * Add a Haskell sandbox checkout runner with real webhook delivery, signature verification, and optional browser card payment.
 * Bootstrap and restore an unset sandbox payment link, preserve credentials through Nix, and include invoice-required address regions.

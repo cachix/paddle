@@ -91,3 +91,15 @@ data Transaction = Transaction
 
 instance FromJSON Transaction where
   parseJSON = genericParseJSON (jsonOptions 11)
+
+-- | Fetch when opening an invoice. Paddle's signed PDF URL expires after an
+-- hour; store the transaction ID rather than persisting this URL.
+newtype InvoicePdf = InvoicePdf
+  { invoicePdfUrl :: Text
+  } deriving (Eq)
+
+instance Show InvoicePdf where
+  show _ = "InvoicePdf <temporary URL>"
+
+instance FromJSON InvoicePdf where
+  parseJSON = withObject "InvoicePdf" $ \value -> InvoicePdf <$> value .: "url"
