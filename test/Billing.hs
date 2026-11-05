@@ -40,6 +40,7 @@ main = do
         , ("Billing response schemas", testResponses)
         , ("HTTP methods, paths, auth, bodies and statuses", testHttp)
         , ("Catalog and invoice HTTP workflow", testCatalogHttp)
+        , ("Invoice table filters, pagination, and PDF URLs", testInvoices)
         , ("Structured and non-JSON HTTP errors", testErrors)
         , ("Webhook signatures and replay protection", testSignatures)
         , ("Signed lifecycle, migration and unknown events", testEvents)
@@ -323,6 +324,47 @@ testCatalogHttp = do
     (Just (object ["status" .= ("billed" :: Text)])) (Billing.transactionsUpdate api invoiceId billTransaction)
   checkRequest "transaction-canceled" 200 (call "PATCH" transactionPath)
     (Just (object ["status" .= ("canceled" :: Text)])) (Billing.transactionsUpdate api invoiceId cancelTransaction)
+
+testInvoices :: IO ()
+testInvoices = do
+  let api = Billing.client (Billing.ApiKey "test-api-key")
+      call path = "GET " <> path <> " HTTP/1.1"
+      customerQuery = "customer_id=ctm_00000000000000000000000000"
+      subscriptionQuery = "subscription_id=sub_00000000000000000000000000"
+      invoicePath = "/transactions/txn_00000000000000000000000000/invoice"
+      list = Billing.transactionsList api
+  checkRequest "transactions" 200 (call "/transactions") Nothing
+    (list Nothing Nothing Nothing Nothing)
+  checkRequest "transactions" 200 (call ("/transactions?" <> customerQuery)) Nothing
+    (list (Just customer) Nothing Nothing Nothing)
+  checkRequest "transactions" 200 (call ("/transactions?" <> subscriptionQuery)) Nothing
+    (list Nothing (Just subscription) Nothing Nothing)
+  checkRequest "transactions" 200
+    (call ("/transactions?" <> customerQuery <> "&" <> subscriptionQuery <> "&per_page=1")) Nothing
+    (list (Just customer) (Just subscription) Nothing (Just 1))
+  first <- decodeFixture "transactions" :: IO (Response [Transaction])
+  assertEqual "first transaction page" [invoiceId] (map transactionId (responseData first))
+  pagination <- maybe (fail "Missing transaction pagination") pure (metaPagination (responseMeta first))
+  assert "transaction page has more" (paginationHasMore pagination)
+  assert "pagination URL retains customer filter" ("customer_id=" `Text.isInfixOf` paginationNext pagination)
+  assert "pagination URL retains subscription filter" ("subscription_id=" `Text.isInfixOf` paginationNext pagination)
+  checkRequest "transactions-next" 200
+    (call ("/transactions?" <> customerQuery <> "&" <> subscriptionQuery <>
+      "&after=txn_00000000000000000000000000&per_page=1")) Nothing
+    (list (Just customer) (Just subscription) (Just invoiceId) (Just 1))
+  second <- decodeFixture "transactions-next" :: IO (Response [Transaction])
+  assertEqual "second transaction page" [Id "txn_00000000000000000000000001"]
+    (map transactionId (responseData second))
+  assertEqual "last transaction page" (Just False) (paginationHasMore <$> metaPagination (responseMeta second))
+  checkRequest "transactions-empty" 200 (call ("/transactions?" <> customerQuery)) Nothing
+    (list (Just customer) Nothing Nothing Nothing)
+  empty <- decodeFixture "transactions-empty" :: IO (Response [Transaction])
+  assertEqual "empty transaction page" [] (responseData empty)
+  checkRequest "invoice-pdf" 200 (call invoicePath) Nothing (Billing.transactionsInvoice api invoiceId)
+  pdf <- decodeFixture "invoice-pdf" :: IO (Response InvoicePdf)
+  assertEqual "PDF URL decoded" "https://example.com/invoice.pdf?signature=test"
+    (invoicePdfUrl (responseData pdf))
+  assertEqual "temporary PDF URL redacted" "InvoicePdf <temporary URL>" (show (responseData pdf))
 
 testErrors :: IO ()
 testErrors = do

@@ -63,8 +63,14 @@ data API route = API
       :> ReqBody '[JSON] Archive :> Patch '[JSON] (Response Price)
   , transactionsCreate :: route :- "transactions"
       :> ReqBody '[JSON] CreateTransaction :> PostCreated '[JSON] (Response Transaction)
+  , transactionsList :: route :- "transactions"
+      :> QueryParam "customer_id" CustomerId :> QueryParam "subscription_id" SubscriptionId
+      :> QueryParam "after" TransactionId :> QueryParam "per_page" Int
+      :> Get '[JSON] (Response [Transaction])
   , transactionsGet :: route :- "transactions" :> Capture "transaction_id" TransactionId
       :> Get '[JSON] (Response Transaction)
+  , transactionsInvoice :: route :- "transactions" :> Capture "transaction_id" TransactionId
+      :> "invoice" :> Get '[JSON] (Response InvoicePdf)
   , transactionsUpdate :: route :- "transactions" :> Capture "transaction_id" TransactionId
       :> ReqBody '[JSON] UpdateTransaction :> Patch '[JSON] (Response Transaction)
   , customersCreate :: route :- "customers"

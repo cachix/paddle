@@ -5,7 +5,7 @@
 module Main (main) where
 
 import BillingSandboxSupport
-import Control.Monad (void, when)
+import Control.Monad (forM_, void, when)
 import Data.Aeson (Value(Object), object, (.=))
 import Data.List (sort)
 import Data.Text (Text)
@@ -196,6 +196,38 @@ runSuite manager token tag registerCleanup = do
   check "portal belongs to customer" (portalSessionCustomerId portal == customer)
   check "portal overview link" ("https://" `Text.isPrefixOf` portalOverview (portalUrlsGeneral (portalSessionUrls portal)))
   check "portal subscription links" (map portalLinkId (portalUrlsSubscriptions (portalSessionUrls portal)) == [identifier])
+  extraInvoice <- request "create second invoice for pagination" $
+    Billing.transactionsCreate api (newInvoice customer address "GBP" [TransactionItem priceIdentifier 1])
+  registerCleanup "cancel pagination invoice" $ do
+    current <- request "get pagination invoice for cleanup" (Billing.transactionsGet api (transactionId extraInvoice))
+    when (transactionStatus current /= "canceled") $ void $ request "cancel pagination invoice" $
+      Billing.transactionsUpdate api (transactionId extraInvoice) cancelTransaction
+  let page after = do
+        result <- Billing.runClient manager Billing.Sandbox $
+          Billing.transactionsList api (Just customer) Nothing after (Just 1)
+        response <- either (fail . describeError) pure result
+        check "transaction page request ID" (not (Text.null (metaRequestId (responseMeta response))))
+        check "transaction page customer filter" $
+          all ((== Just customer) . transactionCustomerId) (responseData response)
+        pagination <- maybe (fail "Missing transaction pagination") pure (metaPagination (responseMeta response))
+        check "one transaction per page" (length (responseData response) == 1)
+        pure (map transactionId (responseData response), pagination)
+  (firstIds, firstPage) <- page Nothing
+  check "transaction page has more" (paginationHasMore firstPage)
+  cursor <- case firstIds of
+    [value] -> pure value
+    _ -> fail "Expected one transaction cursor"
+  (secondIds, secondPage) <- page (Just cursor)
+  check "last transaction page" (not (paginationHasMore secondPage))
+  check "pagination contains both invoices without duplicates" $
+    sort (firstIds <> secondIds) == sort [invoiceIdentifier, transactionId extraInvoice]
+  forM_ [Nothing, Just customer] $ \customerFilter -> do
+    invoices <- request "list subscription transactions" $
+      Billing.transactionsList api customerFilter (Just identifier) Nothing (Just 30)
+    check "subscription filter excludes unrelated invoice" (map transactionId invoices == [invoiceIdentifier])
+  forM_ [1 :: Int, 2] $ \_ -> do
+    pdf <- request "generate invoice PDF URL on demand" (Billing.transactionsInvoice api invoiceIdentifier)
+    check "invoice PDF URL uses HTTPS" ("https://" `Text.isPrefixOf` invoicePdfUrl pdf)
   scheduled <- request "schedule cancellation" $
     Billing.subscriptionsCancel api identifier (CancelSubscription NextBillingPeriod)
   check "cancellation scheduled" (fmap scheduledAction (subscriptionScheduledChange scheduled) == Just "cancel")

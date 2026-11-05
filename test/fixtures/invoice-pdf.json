@@ -1,0 +1,8 @@
+{
+  "data": {
+    "url": "https://example.com/invoice.pdf?signature=test"
+  },
+  "meta": {
+    "request_id": "test-request"
+  }
+}
