@@ -1,5 +1,14 @@
-resolver: lts-23.24
+resolver: lts-24.51
 packages:
   - .
 system-ghc: true
 notify-if-nix-on-path: false
+extra-deps:
+  - crypton-1.1.2
+  - crypton-asn1-encoding-0.10.0
+  - crypton-asn1-parse-0.10.0
+  - crypton-asn1-types-0.4.1
+  - crypton-pem-0.3.0
+  - crypton-x509-1.9.1
+  - ram-0.22.1
+  - time-hourglass-0.3.0
