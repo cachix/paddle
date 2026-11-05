@@ -1,0 +1,17 @@
+{
+  "error": {
+    "type": "request_error",
+    "code": "invalid_field",
+    "detail": "Request does not pass validation.",
+    "documentation_url": "https://developer.paddle.com/errors/shared/invalid_field",
+    "errors": [
+      {
+        "field": "email",
+        "message": "Must be an email address."
+      }
+    ]
+  },
+  "meta": {
+    "request_id": "test-request"
+  }
+}

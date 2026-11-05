@@ -2,4 +2,13 @@
 
 ## Unreleased changes
 
+* Pin sandbox TLS dependencies compatible with the current crypton backend.
+* Add a sandbox checkout harness with real webhook delivery, library signature verification, and optional browser card payment.
+* Bootstrap and restore an unset sandbox payment link, preserve credentials through Nix, and include invoice-required address regions.
+* Bootstrap sandbox subscriptions through recurring invoices and test changes, cancellation, and cleanup.
+* Add Billing product, price, and transaction clients for sandbox provisioning and invoice workflows.
+* Add opt-in Paddle sandbox functional tests for billing details and subscription previews.
+* Add Paddle Billing clients for customers, addresses, subscriptions, and portal sessions.
+* Add typed Billing IDs, explicit PATCH clearing, response pagination, and structured errors.
+* Add signed Billing webhook decoding, including migration events, and Billing tests.
 * Initial release

@@ -47,6 +47,62 @@ packages:
   original:
     hackage: crypton-x509-1.9.1
 - completed:
+    hackage: crypton-x509-store-1.9.0@sha256:ad388a99b25d8c11727d96f9f933341aaba0ef8cbfee1dccf3c1a09568674cc4,1714
+    pantry-tree:
+      sha256: e08654254a48592b52e876413d320d468fe7beae6ceefde7cc8f5a830e5fa9c4
+      size: 458
+  original:
+    hackage: crypton-x509-store-1.9.0
+- completed:
+    hackage: crypton-x509-system-1.9.0@sha256:ccdc92bf98d7693c63dc680ff665b6487a28a701003dbee6695a6dbd38244392,1539
+    pantry-tree:
+      sha256: ff147d414b88b2ed368ad2d28167ba3126cd180aa2932555563e7a089d807775
+      size: 512
+  original:
+    hackage: crypton-x509-system-1.9.0
+- completed:
+    hackage: crypton-x509-validation-1.9.1@sha256:4d3d2161752cde314f0f70bc5f40afd2d7bfafbd7213e47c8e1876d444d1cdd0,2113
+    pantry-tree:
+      sha256: 509ac0393429fa3dbfa8cee5f1d768f43765cad0be5c0d1ecdcf250a4aa82c3b
+      size: 691
+  original:
+    hackage: crypton-x509-validation-1.9.1
+- completed:
+    hackage: crypton-connection-0.4.6@sha256:8a5fdc00a76d580a7aece9a9eed2b966d7eb8448003070ac2297e6e2205f6b86,1599
+    pantry-tree:
+      sha256: d24faa47dc6da71da7be27327ae68d1a3ea4fa6b15f092674a5cd261ffed7616
+      size: 464
+  original:
+    hackage: crypton-connection-0.4.6
+- completed:
+    hackage: http-client-tls-0.4.0@sha256:39fc60a864134946c773953fb96a836cd769b3af6fa03a4bfc547168a15e541d,2117
+    pantry-tree:
+      sha256: bd70a8c19ffb88ba8b26f803e4dcf6af24010f14321be26ff764bb6f236ce2e5
+      size: 435
+  original:
+    hackage: http-client-tls-0.4.0
+- completed:
+    hackage: hpke-0.1.0@sha256:fb107670a0aeb91b4626e0b1dff4e7ec3342e48931cc994938d95af1a23f645d,1801
+    pantry-tree:
+      sha256: 9bb04f6d3456c81ac18fa50815c128cef8f86b5676f08af4037930e0fbd7cf76
+      size: 1320
+  original:
+    hackage: hpke-0.1.0
+- completed:
+    hackage: mlkem-0.2.3.0@sha256:302c52d7c880efdc567d812e2e7490dc08a85e155daaa9c12d157d997c8568d2,4821
+    pantry-tree:
+      sha256: 88fcf1feadbe015f945804793dad27e402748fe595c90856d19bdb0ac38f61af
+      size: 1831
+  original:
+    hackage: mlkem-0.2.3.0
+- completed:
+    hackage: tls-2.4.0@sha256:73bc700f8d2a1a45c7454a0fa7a4099f6faf5f6df2b4ea461a491ecf840816cc,7355
+    pantry-tree:
+      sha256: 72b7349f0b9bcbad1fb5054544a7b0c620f7794476bd5d3480dc7c006db89d25
+      size: 7056
+  original:
+    hackage: tls-2.4.0
+- completed:
     hackage: ram-0.22.1@sha256:ae1111ae126f1c89f54ff6d616d25a78db0db6e1e76e20a13d1526dc6afe37e8,2814
     pantry-tree:
       sha256: af7847577924b07015c1ec920c03f32b712cc5bade512923e94b5e0fa238bedd

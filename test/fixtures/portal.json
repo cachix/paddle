@@ -1,0 +1,21 @@
+{
+  "data": {
+    "id": "cpls_00000000000000000000000000",
+    "customer_id": "ctm_00000000000000000000000000",
+    "urls": {
+      "general": {
+        "overview": "https://customer-portal.paddle.com/example?token=temporary"
+      },
+      "subscriptions": [
+        {
+          "id": "sub_00000000000000000000000000",
+          "cancel_subscription": "https://customer-portal.paddle.com/cancel?token=temporary",
+          "update_subscription_payment_method": "https://customer-portal.paddle.com/payment?token=temporary"
+        }
+      ]
+    }
+  },
+  "meta": {
+    "request_id": "test-request"
+  }
+}

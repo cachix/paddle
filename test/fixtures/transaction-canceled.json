@@ -1,0 +1,33 @@
+{
+  "data": {
+    "id": "txn_00000000000000000000000000",
+    "status": "canceled",
+    "customer_id": "ctm_00000000000000000000000000",
+    "address_id": "add_00000000000000000000000000",
+    "subscription_id": "sub_00000000000000000000000000",
+    "collection_mode": "manual",
+    "currency_code": "GBP",
+    "billing_details": {
+      "enable_checkout": false,
+      "payment_terms": {
+        "interval": "day",
+        "frequency": 14
+      },
+      "purchase_order_number": null,
+      "additional_information": null
+    },
+    "invoice_number": "TEST-001",
+    "details": {
+      "totals": {
+        "total": "2400",
+        "currency_code": "GBP"
+      }
+    },
+    "custom_data": null,
+    "created_at": "2026-11-05T12:00:00Z",
+    "updated_at": "2026-11-05T12:00:00Z"
+  },
+  "meta": {
+    "request_id": "test-request"
+  }
+}
