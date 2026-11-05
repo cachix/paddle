@@ -50,19 +50,19 @@ library
   ghc-options: -Wall
   build-depends:
       aeson
-    , asn1-encoding
-    , asn1-types
     , base >=4.7 && <5
     , base64-bytestring
     , bytestring
     , containers
-    , crypton
-    , crypton-x509
+    , crypton >=1.1 && <1.2
+    , crypton-asn1-encoding >=0.10 && <0.11
+    , crypton-asn1-types >=0.4.1 && <0.5
+    , crypton-pem >=0.3 && <0.4
+    , crypton-x509 >=1.9.1 && <1.10
     , http-api-data
     , http-client
-    , memory
-    , pem
     , protolude
+    , ram >=0.22 && <0.23
     , scientific
     , servant
     , servant-client

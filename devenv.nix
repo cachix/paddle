@@ -2,7 +2,7 @@
 
 {
   languages.haskell.enable = true;
-  languages.haskell.package = pkgs.haskell.compiler.ghc98;
+  languages.haskell.package = pkgs.haskell.compiler.ghc9103;
 
   packages = [
     pkgs.openssl
