@@ -7,7 +7,8 @@ The Billing client supports:
 - Subscriptions: list, get, update, preview changes, cancel.
 - Customer portal sessions: generate temporary authenticated management links.
 - Catalog: create, get, and archive products and prices.
-- Transactions: create, get, update items, issue invoices, cancel invoices.
+- Transactions: create, list with filters, get, update items, issue/cancel invoices,
+  and fetch invoice PDF URLs.
 - Checkout URL settings: get, set, and clear the default payment link.
 
 Use a TLS-enabled HTTP manager, for example one created with `newTlsManager`
@@ -60,6 +61,21 @@ Successes return `Response { responseData, responseMeta }`. API failures return
 the original Servant error. Transport and unrecognized HTTP failures return
 `BillingTransportError` with the original error, preserving HTTP status and
 headers for application retry decisions.
+
+## Invoice tables
+
+`transactionsList api customer subscription after perPage` returns
+`Response [Transaction]`. Each argument is optional (`Maybe`); combine customer
+and subscription IDs to narrow the table. Retain both filters when passing the
+last transaction's ID as `after` on the next page. Check `metaPagination` and
+`paginationHasMore`; Paddle allows up to 30 transactions per page.
+
+Store transaction IDs in invoice rows. When a user opens an invoice, call
+`transactionsInvoice api transactionId` and use `invoicePdfUrl` from its
+`Response InvoicePdf`. Fetch a fresh URL on each click: the signed URL expires
+after one hour. Both endpoints require `transaction.read`. PDFs are available
+for billed/completed manual transactions and completed automatic transactions,
+excluding zero-value transactions. See [Paddle's invoice PDF endpoint](https://developer.paddle.com/api-reference/transactions/get-transaction-invoice/).
 
 ## Billing webhooks
 
